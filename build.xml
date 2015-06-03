@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<project name="helfy" default="build" basedir=".">
+    <property name="build.dir"      value="build"/>
+    <property name="src.dir"        value="src"/>
+    <property name="test.dir"       value="test"/>
+    <property name="lib.dir"        value="lib"/>
+    <property name="target.jar"     value="${build.dir}/${ant.project.name}.jar"/>
+
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="clean-all" depends="clean">
+        <delete dir="${lib.dir}"/>
+    </target>
+
+    <target name="build" depends="build-jar"/>
+
+    <target name="compile-classes" depends="init">
+        <echo message="Compiling classes..."/>
+        <mkdir dir="${build.dir}/classes"/>
+        <javac srcdir="${src.dir}:${test.dir}" destdir="${build.dir}/classes" includeantruntime="false"/>
+    </target>
+
+    <target name="build-jar" depends="compile-classes">
+        <echo message="Building ${target.jar}..."/>
+        <jar destfile="${target.jar}">
+            <fileset dir="${build.dir}/classes" includes="**/*.class" />
+        </jar>
+    </target>
+
+    <target name="run" depends="compile-classes">
+        <java classpath="${build.dir}/classes" classname="one.helfy.HeapInfo"/>
+    </target>
+</project>

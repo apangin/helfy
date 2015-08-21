@@ -1,5 +1,7 @@
 package one.helfy;
 
+import sun.misc.Unsafe;
+
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +12,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class JVM {
+    public static final Unsafe unsafe = getUnsafe();
+
     private final Map<String, Type> types = new LinkedHashMap<>();
     private final Map<String, Number> constants = new LinkedHashMap<>();
 
@@ -103,16 +107,24 @@ public class JVM {
         }
     }
 
+    public byte getByte(long addr) {
+        return unsafe.getByte(addr);
+    }
+
+    public short getShort(long addr) {
+        return unsafe.getShort(addr);
+    }
+
     public int getInt(long addr) {
-        return Unsafe.instance.getInt(addr);
+        return unsafe.getInt(addr);
     }
 
     public long getLong(long addr) {
-        return Unsafe.instance.getLong(addr);
+        return unsafe.getLong(addr);
     }
 
     public long getAddress(long addr) {
-        return Unsafe.instance.getAddress(addr);
+        return unsafe.getAddress(addr);
     }
 
     public String getString(long addr) {
@@ -122,7 +134,7 @@ public class JVM {
 
         char[] chars = new char[40];
         int offset = 0;
-        for (byte b; (b = Unsafe.instance.getByte(addr + offset)) != 0; ) {
+        for (byte b; (b = getByte(addr + offset)) != 0; ) {
             if (offset >= chars.length) chars = Arrays.copyOf(chars, offset * 2);
             chars[offset++] = (char) b;
         }
@@ -168,6 +180,16 @@ public class JVM {
         out.println("Types:");
         for (Type type : types.values()) {
             out.println(type);
+        }
+    }
+
+    private static Unsafe getUnsafe() {
+        try {
+            java.lang.reflect.Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            return (Unsafe) f.get(null);
+        } catch (Exception e) {
+            throw new JVMException("Unable to get Unsafe", e);
         }
     }
 }

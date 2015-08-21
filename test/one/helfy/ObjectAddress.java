@@ -1,8 +1,10 @@
 package one.helfy;
 
+import static one.helfy.JVM.unsafe;
+
 public class ObjectAddress {
-    private static final long arrayBase = Unsafe.instance.arrayBaseOffset(Object[].class);
-    private static final long arrayScale = Unsafe.instance.arrayIndexScale(Object[].class);
+    private static final long arrayBase = unsafe.arrayBaseOffset(Object[].class);
+    private static final long arrayScale = unsafe.arrayIndexScale(Object[].class);
     private static final long narrowOopBase;
     private static final int narrowOopShift;
 
@@ -16,9 +18,9 @@ public class ObjectAddress {
     public static long oopAddress(Object o) {
         Object[] array = new Object[] {o};
         if (arrayScale == 8) {
-            return Unsafe.instance.getLong(array, arrayBase);
+            return unsafe.getLong(array, arrayBase);
         } else {
-            long narrowOop = Unsafe.instance.getInt(array, arrayBase) & 0xffffffffL;
+            long narrowOop = unsafe.getInt(array, arrayBase) & 0xffffffffL;
             return narrowOopBase + (narrowOop << narrowOopShift);
         }
     }

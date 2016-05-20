@@ -110,21 +110,41 @@ public class JVM {
     public byte getByte(long addr) {
         return unsafe.getByte(addr);
     }
+    
+    public void putByte(long addr, byte val) {
+        unsafe.putByte(addr, val);
+    }
 
     public short getShort(long addr) {
         return unsafe.getShort(addr);
+    }
+    
+    public void putShort(long addr, short val) {
+        unsafe.putShort(addr, val);
     }
 
     public int getInt(long addr) {
         return unsafe.getInt(addr);
     }
+    
+    public void putInt(long addr, int val) {
+        unsafe.putInt(addr, val);
+    }
 
     public long getLong(long addr) {
         return unsafe.getLong(addr);
     }
+    
+    public void putLong(long addr, long val) {
+        unsafe.putLong(addr, val);
+    }
 
     public long getAddress(long addr) {
         return unsafe.getAddress(addr);
+    }
+    
+    public void getAddress(long addr, long val) {
+        unsafe.putAddress(addr, val);
     }
 
     public String getString(long addr) {

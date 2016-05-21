@@ -143,7 +143,7 @@ public class JVM {
         return unsafe.getAddress(addr);
     }
     
-    public void getAddress(long addr, long val) {
+    public void putAddress(long addr, long val) {
         unsafe.putAddress(addr, val);
     }
 

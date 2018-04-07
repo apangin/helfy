@@ -10,7 +10,7 @@ public class GetBytecode {
         JVM jvm = new JVM();
         Class targetClass = String.class;
 
-        long oopSize = jvm.constant("oopSize");
+        int oopSize = jvm.intConstant("oopSize");
         long klassOffset = jvm.getInt(jvm.type("java_lang_Class").global("_klass_offset"));
         long klass = oopSize == 8
                 ? unsafe.getLong(targetClass, klassOffset)

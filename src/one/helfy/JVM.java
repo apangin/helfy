@@ -181,12 +181,20 @@ public class JVM {
         return type;
     }
 
-    public long constant(String name) {
+    public Number constant(String name) {
         Number constant = constants.get(name);
         if (constant == null) {
             throw new NoSuchElementException("No such constant: " + name);
         }
-        return constant.longValue();
+        return constant;
+    }
+
+    public int intConstant(String name) {
+        return constant(name).intValue();
+    }
+
+    public long longConstant(String name) {
+        return constant(name).longValue();
     }
 
     public void dump(PrintStream out) {

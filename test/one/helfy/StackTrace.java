@@ -100,7 +100,7 @@ public class StackTrace {
         }
 
         String valueAsText(long value) {
-            if (value >= 0x100000) {
+            if (value >= 0x100000000L) {
                 return "0x" + Long.toHexString(value);
             } else if (value >= ' ' && value <= '~') {
                 return value + " '" + (char) value + "'";
@@ -112,7 +112,7 @@ public class StackTrace {
         void dumpLocals(PrintStream out, long method) {
             int maxLocals = Method.maxLocals(method);
             for (int i = 0; i < maxLocals; i++) {
-                out.println("     [" + i + "] " + valueAsText(local(i)));
+                out.println("\t  [" + i + "] " + valueAsText(local(i)));
             }
         }
 
@@ -123,7 +123,7 @@ public class StackTrace {
             }
 
             if (Interpreter.contains(pc)) {
-                out.println("  at " + Method.name(method) + " @ " + bci());
+                out.println("\tat " + Method.name(method) + " @ " + bci());
                 dumpLocals(out, method);
                 return;
             }
@@ -255,7 +255,7 @@ public class StackTrace {
     private static void dumpThread(Thread thread) {
         long vmThread = VMThread.of(thread);
         for (Frame f = JavaThread.topFrame(vmThread); f != null; f = f.sender()) {
-            f.dump(System.out);
+            f.dump(System.err);
         }
     }
 

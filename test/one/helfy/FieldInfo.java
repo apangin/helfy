@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FieldInfo {
     static final JVM jvm = new JVM();
+    static final int oopSize = jvm.intConstant("oopSize");
 
     static class Symbol {
         static final long _length = jvm.type("Symbol").offset("_length");
@@ -26,7 +27,7 @@ public class FieldInfo {
         static final long _header_size = jvm.type("ConstantPool").size;
 
         static long at(long cpool, int index) {
-            return jvm.getAddress(cpool + _header_size + index * 8);
+            return jvm.getAddress(cpool + _header_size + index * oopSize);
         }
     }
 
@@ -66,7 +67,7 @@ public class FieldInfo {
                 String name = Symbol.asString(ConstantPool.at(cpool, nameIndex));
                 int offset = (jvm.getShort(f + lowPackedOffset * 2) & 0xffff) >>> tagSize;
 
-                System.out.println("  " + offset + "  " + name);
+                System.out.printf("  %2d  %s\n", offset, name);
             }
         }
     }

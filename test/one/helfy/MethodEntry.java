@@ -2,6 +2,7 @@ package one.helfy;
 
 public class MethodEntry {
     static final JVM jvm = new JVM();
+    static final int oopSize = jvm.intConstant("oopSize");
 
     static class InstanceKlass {
         static final long _klass_offset = jvm.getInt(jvm.type("java_lang_Class").global("_klass_offset"));
@@ -18,7 +19,7 @@ public class MethodEntry {
             if (slot < 0 || slot >= length) {
                 throw new IndexOutOfBoundsException("Invalid method slot: " + slot);
             }
-            return jvm.getAddress(methods + _methods_data + slot * 8);
+            return jvm.getAddress(methods + _methods_data + slot * oopSize);
         }
     }
 

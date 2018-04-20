@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 public class StackTrace {
     static final JVM jvm = new JVM();
+    static final int oopSize = jvm.intConstant("oopSize");
 
     static class JavaThread {
         static final long _anchor = jvm.type("JavaThread").offset("_anchor");
@@ -50,11 +51,11 @@ public class StackTrace {
         }
 
         long at(int slot) {
-            return jvm.getAddress(fp + slot * 8);
+            return jvm.getAddress(fp + slot * oopSize);
         }
 
         long local(int index) {
-            return jvm.getAddress(at(slot_interp_locals) - index * 8);
+            return jvm.getAddress(at(slot_interp_locals) - index * oopSize);
         }
 
         int bci() {
@@ -83,15 +84,15 @@ public class StackTrace {
 
         Frame sender() {
             if (Interpreter.contains(pc)) {
-                return new Frame(fp + slot_sender_sp * 8, at(slot_interp_sender_sp), at(slot_link), at(slot_return_addr));
+                return new Frame(fp + slot_sender_sp * oopSize, at(slot_interp_sender_sp), at(slot_link), at(slot_return_addr));
             }
 
             long cb = CodeCache.findBlob(pc);
             if (cb != 0) {
                 long senderSP = unextendedSP + jvm.getInt(cb + _frame_size);
                 if (senderSP != sp) {
-                    long senderPC = jvm.getAddress(senderSP - slot_return_addr * 8);
-                    long savedFP = jvm.getAddress(senderSP - slot_sender_sp * 8);
+                    long senderPC = jvm.getAddress(senderSP - slot_return_addr * oopSize);
+                    long savedFP = jvm.getAddress(senderSP - slot_sender_sp * oopSize);
                     return new Frame(senderSP, savedFP, senderPC);
                 }
             }
@@ -160,7 +161,7 @@ public class StackTrace {
         }
 
         static long at(long cpool, int index) {
-            return jvm.getAddress(cpool + _header_size + index * 8);
+            return jvm.getAddress(cpool + _header_size + index * oopSize);
         }
     }
 

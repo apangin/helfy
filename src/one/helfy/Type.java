@@ -21,7 +21,7 @@ public class Type {
         this.isOop = isOop;
         this.isInt = isInt;
         this.isUnsigned = isUnsigned;
-        this.fields = fields == null ? NO_FIELDS : fields.toArray(new Field[fields.size()]);
+        this.fields = fields == null ? NO_FIELDS : fields.toArray(new Field[0]);
     }
 
     public Field field(String name) {

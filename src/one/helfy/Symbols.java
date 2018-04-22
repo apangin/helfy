@@ -4,17 +4,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Symbols {
-    private static Method findNative;
-    private static ClassLoader classLoader;
+    private static final Method findNative;
+    private static final ClassLoader classLoader;
 
     static {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
-            String jre = System.getProperty("java.home");
-            if (!loadLibrary(jre + "/bin/server/jvm.dll") && !loadLibrary(jre + "/bin/client/jvm.dll")) {
+            String vmName = System.getProperty("java.vm.name");
+            String dll = vmName.contains("Client VM") ? "/bin/client/jvm.dll" : "/bin/server/jvm.dll";
+            try {
+                System.load(System.getProperty("java.home") + dll);
+            } catch (UnsatisfiedLinkError e) {
                 throw new JVMException("Cannot find jvm.dll. Unsupported JVM?");
             }
             classLoader = Symbols.class.getClassLoader();
+        } else {
+            classLoader = null;
         }
 
         try {
@@ -22,15 +27,6 @@ public class Symbols {
             findNative.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new JVMException("Method ClassLoader.findNative not found");
-        }
-    }
-
-    private static boolean loadLibrary(String dll) {
-        try {
-            System.load(dll);
-            return true;
-        } catch (UnsatisfiedLinkError e) {
-            return false;
         }
     }
 

@@ -71,7 +71,8 @@ public class MethodEntry {
         long startTime = System.nanoTime();
         long sum = benchmark();
         long endTime = System.nanoTime();
-        System.out.println((endTime - startTime) / 1e6 + "  " + sum);
+        System.out.println("Invocation time = " + (endTime - startTime) / 1e6 +
+                " ns, unused result = " + (sum & 1));
     }
 
     public static void main(String[] args) throws Exception {
@@ -80,12 +81,14 @@ public class MethodEntry {
         // Force compilation
         benchmark();
 
-        long method = Method.fromJavaMethod(MethodEntry.class, "rdtsc");
-        Method.optimizeEntry(method, "0f3148c1e220480bc2c3cccc");
+        boolean rewriteEntry = args.length == 0 || Boolean.parseBoolean(args[0]);
+        if (rewriteEntry) {
+            long method = Method.fromJavaMethod(MethodEntry.class, "rdtsc");
+            Method.optimizeEntry(method, "0f3148c1e220480bc2c3cccc");
+        }
 
         for (int i = 0; i < 1000; i++) {
             runBenchmark();
-            System.gc();
         }
     }
 
